@@ -1,3 +1,3 @@
-# Hardhat Study 0
+# Hardhat Study 1
 
 ## FundThis with Hardhat
