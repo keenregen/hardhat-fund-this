@@ -35,13 +35,13 @@ contract FundThis {
      // constants are better for gas efficiency
      uint256 public constant MIN_USD = 1 * 1e18;
 
-     address[] public funders;
-     mapping(address => uint256) public addressToAmountFunded;
+     address[] public s_funders;
+     mapping(address => uint256) public s_addressToAmountFunded;
 
      // immutables are better for gas efficiency
      address immutable i_deployer;
 
-     AggregatorV3Interface public priceFeed;
+     AggregatorV3Interface public s_priceFeed;
 
      modifier onlyDeployer() {
           // require(msg.sender == i_deployer, "Sender must be contract deployer.");
@@ -55,7 +55,7 @@ contract FundThis {
      // called when the contract is deployed
      constructor(address priceFeedAddress) {
           i_deployer = msg.sender;
-          priceFeed = AggregatorV3Interface(priceFeedAddress);
+          s_priceFeed = AggregatorV3Interface(priceFeedAddress);
      }
 
      receive() external payable {
@@ -73,11 +73,11 @@ contract FundThis {
           // if require condition is not met, the ops before are undone and gas remaining is sent back
           // msg.value : how much money is added to be sent
           require(
-               msg.value.getConverted(priceFeed) >= MIN_USD,
+               msg.value.getConverted(s_priceFeed) >= MIN_USD,
                "min $1 is needed"
           ); // 1e18 = 1 * 10 * 10**18 wei = 1 ETH
-          funders.push(msg.sender);
-          addressToAmountFunded[msg.sender] += msg.value;
+          s_funders.push(msg.sender);
+          s_addressToAmountFunded[msg.sender] += msg.value;
      }
 
      function withdraw() public onlyDeployer {
@@ -96,13 +96,13 @@ contract FundThis {
           // reset the amounts funded
           for (
                uint256 funderIndex = 0;
-               funderIndex < funders.length;
+               funderIndex < s_funders.length;
                funderIndex++
           ) {
-               addressToAmountFunded[funders[funderIndex]] = 0;
+               s_addressToAmountFunded[s_funders[funderIndex]] = 0;
           }
 
           // reset the funders array
-          funders = new address[](0);
+          s_funders = new address[](0);
      }
 }
