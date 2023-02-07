@@ -32,16 +32,16 @@ contract FundThis {
      using PriceConverterLib for uint256;
 
      // State Vars
-     // constants are better for gas efficiency
+     // constants, privates and intertnals are better for gas efficiency
      uint256 public constant MIN_USD = 1 * 1e18;
 
-     address[] public s_funders;
-     mapping(address => uint256) public s_addressToAmountFunded;
+     address[] private s_funders;
+     mapping(address => uint256) private s_addressToAmountFunded;
 
      // immutables are better for gas efficiency
-     address immutable i_deployer;
+     address private immutable i_deployer;
 
-     AggregatorV3Interface public s_priceFeed;
+     AggregatorV3Interface private s_priceFeed;
 
      modifier onlyDeployer() {
           // require(msg.sender == i_deployer, "Sender must be contract deployer.");
@@ -80,7 +80,7 @@ contract FundThis {
           s_addressToAmountFunded[msg.sender] += msg.value;
      }
 
-     function withdraw() public onlyDeployer {
+     function withdraw() public payable onlyDeployer {
           // withdraw the funds (msg.sender should be casted to payable)
           // 1. Method: Transfer (max 2300 gas; if fails reverts the transaction)
           // payable(msg.sender).transfer(address(this).balance);
@@ -104,5 +104,37 @@ contract FundThis {
 
           // reset the funders array
           s_funders = new address[](0);
+     }
+
+     function gasEfficWithdraw() public payable onlyDeployer {
+          address[] memory funders = s_funders;
+          // mapping cannot be in memory
+          for (
+               uint256 funderIndex = 0;
+               funderIndex < funders.length;
+               funderIndex++
+          ) {
+               s_addressToAmountFunded[funders[funderIndex]] = 0;
+          }
+          // reset the funders array
+          s_funders = new address[](0);
+     }
+
+     function getDeployer() public view returns (address) {
+          return i_deployer;
+     }
+
+     function getFunder(uint256 index) public view returns (address) {
+          return s_funders[index];
+     }
+
+     function getAmountFunded(
+          address funderAddress
+     ) public view returns (uint256) {
+          return s_addressToAmountFunded[funderAddress];
+     }
+
+     function getPriceFeed() public view returns (AggregatorV3Interface) {
+          return s_priceFeed;
      }
 }
