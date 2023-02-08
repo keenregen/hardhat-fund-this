@@ -1,3 +1,3 @@
-# Hardhat Study 1
+# Hardhat Study 1a
 
-## FundThis with Hardhat
+## FundThis Backend with Hardhat
