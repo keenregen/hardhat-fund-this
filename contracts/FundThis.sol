@@ -59,11 +59,11 @@ contract FundThis {
      }
 
      receive() external payable {
-          fund();
+          // fund();
      }
 
      fallback() external payable {
-          fund();
+          // fund();
      }
 
      /// @notice function to fund this contract
