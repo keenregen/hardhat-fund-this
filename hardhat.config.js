@@ -4,9 +4,10 @@ require("dotenv").config();
 require("hardhat-gas-reporter");
 require("solidity-coverage");
 require("@nomiclabs/hardhat-etherscan");
+require("@nomiclabs/hardhat-solhint");
 
 const goerliRpcPoint = process.env.goerliRpcPoint || "";
-const goerliKeyA = process.env.goerliKeyA || "";
+const goerliAccountA = process.env.goerliAccountA || "";
 
 const localHostRpcPoint = process.env.localHostRpcPoint || "";
 
@@ -31,7 +32,7 @@ module.exports = {
      networks: {
           goerli: {
                url: goerliRpcPoint,
-               accounts: [goerliKeyA],
+               accounts: [goerliAccountA],
                chainId: 5,
                blockConfirms: 7,
           },
